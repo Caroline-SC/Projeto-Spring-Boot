@@ -27,5 +27,5 @@ public class UserService {
                 orElseThrow(() ->new ResourceNotFoundException(id, "User"));
 
     }
+    }
 
-}

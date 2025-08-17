@@ -2,8 +2,8 @@ package com.projetctJava.ProjectSpring.services;
 
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Order;
+import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +14,30 @@ public class OrderService {
 
     @Autowired
     private OrderRepository repository;
+    @Autowired
+    private UserService userService;
 
     public List<Order> findAll() {
-        if (repository.findAll().isEmpty()){
-            throw new ResourceNotFoundException("Order");
+        List<Order> o = repository.findAll();
+        if (o.isEmpty()){
+            throw new ResourceNotFoundException("Orders");
         }
-        return repository.findAll();
+        return o;
     }
     public Order findById(Long id){
         return repository.findById(id).
                 orElseThrow(() ->new ResourceNotFoundException(id, "Order"));
+    }
+    public List<Order> findByUserId(Long id){
+        List<Order> o = repository.findByClientId(id);
+
+        //Check if user id exists else throw an exception
+        userService.findById(id);
+
+        if (o.isEmpty()){
+            throw new ResourceNotFoundException(id, "Orders associated with client");
+        }
+        return repository.findByClientId(id);
     }
 
 

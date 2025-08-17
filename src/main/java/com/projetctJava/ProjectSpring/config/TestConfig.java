@@ -35,5 +35,10 @@ public class TestConfig implements CommandLineRunner {
     userRepository.saveAll(Arrays.asList(user1,user2));
     orderRepository.saveAll(Arrays.asList(order1,order2,order3));
 
+    user1.getOrders().addAll(Arrays.asList(order1,order2));
+    user2.getOrders().addAll(Arrays.asList(order3));
+
+    userRepository.saveAll(Arrays.asList(user1,user2));
+
     }
 }

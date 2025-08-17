@@ -28,6 +28,11 @@ public class OrderController {
         Order obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
+    @GetMapping(value = "/client/{id}")
+    public ResponseEntity<List<Order>> findByUserId(@PathVariable Long id){
+        List<Order> list = service.findByUserId(id);
+        return ResponseEntity.ok().body(list);
+    }
 
 
 }
