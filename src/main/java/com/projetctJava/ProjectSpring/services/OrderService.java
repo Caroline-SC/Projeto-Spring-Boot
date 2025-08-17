@@ -3,6 +3,7 @@ package com.projetctJava.ProjectSpring.services;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.models.User;
+import com.projetctJava.ProjectSpring.models.enums.OrderStatus;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,12 @@ public class OrderService {
         return repository.findById(id).
                 orElseThrow(() ->new ResourceNotFoundException(id, "Order"));
     }
+
+    public List<Order> findByStatus(String statusstr){
+    OrderStatus status = OrderStatus.fromString(statusstr);
+    return  repository.findByStatus(status);
+    }
+
     public List<Order> findByUserId(Long id){
         List<Order> o = repository.findByClientId(id);
 

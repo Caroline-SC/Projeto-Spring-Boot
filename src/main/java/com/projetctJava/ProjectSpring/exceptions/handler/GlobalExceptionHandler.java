@@ -1,5 +1,6 @@
 package com.projetctJava.ProjectSpring.exceptions.handler;
 
+import com.projetctJava.ProjectSpring.exceptions.custom.IllegalStatusException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.exceptions.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,10 +15,27 @@ import java.time.Instant;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> resourceNotFound(ResourceNotFoundException e, HttpServletRequest resquest){
-        String error = "Resource not found";
+    public ResponseEntity<ErrorResponse> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
-        ErrorResponse err = new ErrorResponse(Instant.now(),status.value(),error,e.getMessage(), resquest.getRequestURI() );
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                "Resource not found",
+                e.getMessage(),
+                request.getRequestURI() );
+
+        return ResponseEntity.status(status).body(err);
+    }
+    @ExceptionHandler(IllegalStatusException.class)
+    public ResponseEntity<ErrorResponse> illegalStatusException(IllegalStatusException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                "Validation error",
+                e.getMessage(),
+                request.getRequestURI() );
+
         return ResponseEntity.status(status).body(err);
     }
 }

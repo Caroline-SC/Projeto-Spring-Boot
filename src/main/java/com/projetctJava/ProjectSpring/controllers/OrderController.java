@@ -23,11 +23,18 @@ public class OrderController {
         List<Order> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
+
     @GetMapping(value = {"/{id}"})
     public ResponseEntity<Order> findById(@PathVariable Long id){
         Order obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
+    @GetMapping(value= "/status/{status}")
+    public ResponseEntity<List<Order>> findByStatus(@PathVariable String status){
+        List<Order> list = service.findByStatus(status);
+        return ResponseEntity.ok().body(list);
+    }
+
     @GetMapping(value = "/client/{id}")
     public ResponseEntity<List<Order>> findByUserId(@PathVariable Long id){
         List<Order> list = service.findByUserId(id);
