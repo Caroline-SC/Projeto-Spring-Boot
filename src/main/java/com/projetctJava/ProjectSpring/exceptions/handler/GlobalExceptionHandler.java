@@ -1,11 +1,13 @@
 package com.projetctJava.ProjectSpring.exceptions.handler;
 
+import com.projetctJava.ProjectSpring.exceptions.custom.DateInvalidFormatterException;
 import com.projetctJava.ProjectSpring.exceptions.custom.IllegalStatusException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.exceptions.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -33,6 +35,34 @@ public class GlobalExceptionHandler {
                 Instant.now(),
                 status.value(),
                 "Validation error",
+                e.getMessage(),
+                request.getRequestURI() );
+
+        return ResponseEntity.status(status).body(err);
+    }
+    @ExceptionHandler(DateInvalidFormatterException.class)
+    public ResponseEntity<ErrorResponse> DateTimeFormatterException(DateInvalidFormatterException e, HttpServletRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                "Invalid format",
+                e.getMessage(),
+                request.getRequestURI() );
+
+        return ResponseEntity.status(status).body(err);
+    }
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> MissingServletRequestParameterException(
+            MissingServletRequestParameterException e, HttpServletRequest request){
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                String.format("Missing mandatory parameter: '%s' (type: %s)",
+                        e.getParameterName(),
+                        e.getParameterType()),
                 e.getMessage(),
                 request.getRequestURI() );
 

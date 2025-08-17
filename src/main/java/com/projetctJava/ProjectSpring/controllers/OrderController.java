@@ -4,10 +4,7 @@ import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,9 +26,32 @@ public class OrderController {
         Order obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
+
     @GetMapping(value= "/status/{status}")
     public ResponseEntity<List<Order>> findByStatus(@PathVariable String status){
         List<Order> list = service.findByStatus(status);
+        return ResponseEntity.ok().body(list);
+    }
+
+    @GetMapping(value= "/beforeDay")
+    public ResponseEntity<List<Order>> findBeforeDay(@RequestParam String day) {
+        try {
+            List<Order> list = service.findBeforeDay(day);
+            return ResponseEntity.ok().body(list);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @GetMapping(value= "/afterDay")
+    public ResponseEntity<List<Order>> findAfterDay(@RequestParam String day) {
+        List<Order> list = service.findAfterDay(day);
+        return ResponseEntity.ok().body(list);
+    }
+    @GetMapping(value= "/betweenDay")
+    public ResponseEntity<List<Order>> findBetweenDays(
+            @RequestParam String start,
+            @RequestParam String end) {
+        List<Order> list = service.findBetweenDays(start,end);
         return ResponseEntity.ok().body(list);
     }
 
