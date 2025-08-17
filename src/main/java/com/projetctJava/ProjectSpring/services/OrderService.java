@@ -1,6 +1,6 @@
 package com.projetctJava.ProjectSpring.services;
 
-import com.projetctJava.ProjectSpring.exceptions.ResourceNotFoundException;
+import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;

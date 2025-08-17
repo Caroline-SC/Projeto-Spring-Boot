@@ -11,8 +11,7 @@ import java.time.Instant;
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "tb_orders")
-public class Order implements Serializable {
-    private static final long serialVersionUID = 1L;
+public class Order{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,9 +1,8 @@
-package com.projetctJava.ProjectSpring.exceptions;
+package com.projetctJava.ProjectSpring.exceptions.custom;
 
 public class ResourceNotFoundException extends RuntimeException {
-    private static final long serialVersionUID = 1L;
     public ResourceNotFoundException(Object id, String resource) {
-        super(resource +" not found. Id " + id);
+        super(resource +" with id " + id + " not found.");
     }
     public ResourceNotFoundException(String resource){
         super("No "+ resource.toLowerCase()+" found");
