@@ -1,10 +1,13 @@
 package com.projetctJava.ProjectSpring.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(of = "id")
 @Entity
@@ -22,6 +25,16 @@ public class User {
     @Column(unique = true)
     private String phoneNumber;
 
+    @Setter(AccessLevel.NONE)
+    @JsonIgnore
+    @OneToMany(mappedBy = "client")
+    private List<Order> orders = new ArrayList<>();
 
-
+    public User(Long id, String name, String email, String address, String phoneNumber) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
 }
