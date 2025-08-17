@@ -1,11 +1,19 @@
 package com.projetctJava.ProjectSpring.models.enums;
 
-public enum OrderStatus {
-    WAITING_PAYMENT,
-    PAID,
-    SHIPPED,
-    DELIVERED,
-    CANCELED;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public enum OrderStatus {
+    WAITING_PAYMENT(1),
+    PAID(2),//atual
+    SHIPPED(3),
+    DELIVERED(4),
+    CANCELED(5);
+
+    private int code;
 
 }
