@@ -27,20 +27,16 @@ public class OrderController {
         return ResponseEntity.ok().body(obj);
     }
 
-    @GetMapping(value= "/status/{status}")
-    public ResponseEntity<List<Order>> findByStatus(@PathVariable String status){
+    @GetMapping(value= "/status")
+    public ResponseEntity<List<Order>> findByStatus(@RequestParam String status){
         List<Order> list = service.findByStatus(status);
         return ResponseEntity.ok().body(list);
     }
 
     @GetMapping(value= "/beforeDay")
     public ResponseEntity<List<Order>> findBeforeDay(@RequestParam String day) {
-        try {
             List<Order> list = service.findBeforeDay(day);
             return ResponseEntity.ok().body(list);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
     @GetMapping(value= "/afterDay")
     public ResponseEntity<List<Order>> findAfterDay(@RequestParam String day) {
