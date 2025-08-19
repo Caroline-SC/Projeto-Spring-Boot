@@ -5,7 +5,6 @@ import com.projetctJava.ProjectSpring.models.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.Instant;
 @NoArgsConstructor
 //@AllArgsConstructor

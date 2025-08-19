@@ -6,9 +6,11 @@ import com.projetctJava.ProjectSpring.models.enums.OrderStatus;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
 import com.projetctJava.ProjectSpring.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -67,5 +69,23 @@ public class OrderService {
         return repository.findByClientId(id);
     }
 
+    @SuppressWarnings("unchecked")
+    public List<Order> findOrders(String status, String moment){
+        List<Specification> spec = new ArrayList<>();
 
+        if (status != null){
+            String statusFormated = "%" + status.trim().toLowerCase() + "%";
+            spec.add((root, query, cb) ->
+                    cb.like(cb.lower(root.get("status")), statusFormated)); 
+        }
+        if(moment != null){
+            spec.add((root, query, cb) ->
+                    cb.between(root.get("moment"),
+                    DateUtil.atStartOfDay(moment),DateUtil.atEndOfDay(moment)));
+        }
+        return repository.findAll(spec.stream()
+        .reduce((root, query, cb) ->
+                cb.conjunction(), (spec1, spec2) -> spec1.and(spec2) ));
+
+    }
 }
