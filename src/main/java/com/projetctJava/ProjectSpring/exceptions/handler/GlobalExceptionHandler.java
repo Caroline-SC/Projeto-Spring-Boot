@@ -10,14 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> resourceNotFound(ResourceNotFoundException e, HttpServletRequest request){
+    @ExceptionHandler({ResourceNotFoundException.class,NoResourceFoundException.class})
+    public ResponseEntity<ErrorResponse> resourceNotFound(RuntimeException e, HttpServletRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
         ErrorResponse err = new ErrorResponse(
                 Instant.now(),

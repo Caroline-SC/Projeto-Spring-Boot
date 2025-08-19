@@ -1,14 +1,12 @@
 package com.projetctJava.ProjectSpring.controllers;
 
+import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,4 +27,16 @@ public class UserController {
         User obj = service.findById(id);
         return ResponseEntity.ok().body(obj);
     }
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<User>> findUsers(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phoneNumber,
+            @RequestParam(required = false) String address)
+    {
+        List<User> list = service.findUsers(id,name,email,phoneNumber,address);
+        return ResponseEntity.ok().body(list);
+    }
+
 }
