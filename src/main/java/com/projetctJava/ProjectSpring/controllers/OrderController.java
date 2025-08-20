@@ -27,12 +27,6 @@ public class OrderController {
         return ResponseEntity.ok().body(obj);
     }
 
-    @GetMapping(value= "/status")
-    public ResponseEntity<List<Order>> findByStatus(@RequestParam String status){
-        List<Order> list = service.findByStatus(status);
-        return ResponseEntity.ok().body(list);
-    }
-
     @GetMapping(value= "/before")
     public ResponseEntity<List<Order>> findBeforeDay(@RequestParam String day) {
             List<Order> list = service.findBeforeDay(day);
@@ -51,8 +45,10 @@ public class OrderController {
         return ResponseEntity.ok().body(list);
     }
     @GetMapping(value = "/search")
-    public ResponseEntity<List<Order>> findOrders(@PathVariable(required = false) String status,
-    @PathVariable(required = false) String moment){
+    public ResponseEntity<List<Order>> findOrders(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String moment){
+
         List<Order> list = service.findOrders(status, moment);
         return ResponseEntity.ok().body(list);
 

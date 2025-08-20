@@ -35,12 +35,6 @@ public class OrderService {
                 orElseThrow(() ->new ResourceNotFoundException(id, "Order"));
     }
 
-    //Find by status
-    public List<Order> findByStatus(String statusStr){
-    OrderStatus status = OrderStatus.fromString(statusStr);
-    return  repository.findByStatus(status);
-    }
-
     //Find by moment
     public List<Order> findBeforeDay(String formatedDay){
     Instant moment = DateUtil.atStartOfDay(formatedDay);
@@ -69,12 +63,13 @@ public class OrderService {
         return repository.findByClientId(id);
     }
 
-    @SuppressWarnings("unchecked")
     public List<Order> findOrders(String status, String moment){
-        List<Specification> spec = new ArrayList<>();
+        List<Specification<Order>> spec = new ArrayList<>();
 
         if (status != null){
-            String statusFormated = "%" + status.trim().toLowerCase() + "%";
+            status  = OrderStatus.formatStatus(status);
+            OrderStatus.fromString(status);
+            String statusFormated = "%" + status + "%";
             spec.add((root, query, cb) ->
                     cb.like(cb.lower(root.get("status")), statusFormated)); 
         }

@@ -9,24 +9,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public enum OrderStatus {
-    WAITING_PAYMENT(1,"WaitingPayment"),
-    PAID(2,"Paid"),
-    SHIPPED(3,"Shipped"),
-    DELIVERED(4,"Delivered"),
-    CANCELED(5,"Canceled");
+    WAITING_PAYMENT(1),
+    PAID(2),
+    SHIPPED(3),
+    DELIVERED(4),
+    CANCELED(5);
 
     private int code;
-    private String nameString;
 
 
     public static OrderStatus fromString(String text){
         for (OrderStatus status : OrderStatus.values()) {
-            if (status.name().equalsIgnoreCase(text) 
-            || status.getNameString().equalsIgnoreCase(text)) {
+            if (status.name().equalsIgnoreCase(text)) {
                 return status;
             }
         }
         throw new IllegalStatusException(text);
     }
+    public static String formatStatus(String text){
+        if (text.equalsIgnoreCase("waitingpayment")) text = "waiting_payment";
+        return text.trim();
+    }
+
 
 }

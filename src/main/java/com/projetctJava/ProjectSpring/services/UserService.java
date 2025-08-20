@@ -31,6 +31,7 @@ public class UserService {
     }
     public List<User> findUsers(Long id,String name,String email,String phone,String address){
         List<Specification<User>> spec = new ArrayList<>();
+
         if (id != null){
             spec.add((root,query,cb) ->
                     cb.equal(root.get("id"),id));
