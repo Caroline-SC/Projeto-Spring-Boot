@@ -1,9 +1,11 @@
 package com.projetctJava.ProjectSpring.config;
 
 import com.projetctJava.ProjectSpring.models.Order;
+import com.projetctJava.ProjectSpring.models.Product;
 import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.models.enums.OrderStatus;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
+import com.projetctJava.ProjectSpring.repositories.ProductRepository;
 import com.projetctJava.ProjectSpring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -20,6 +22,8 @@ public class TestConfig implements CommandLineRunner {
     private OrderRepository orderRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
 
     @Override
@@ -35,8 +39,15 @@ public class TestConfig implements CommandLineRunner {
     Order order2 = new Order(null, Instant.parse("2024-08-17T05:49:42Z"), OrderStatus.PAID, user1);
     Order order3 = new Order(null, Instant.parse("2024-08-20T22:30:31Z"), OrderStatus.WAITING_PAYMENT,user2);
 
+    Product product1 = new Product(null,"Teclado gamer","Um teclado perfeito para jogar",200.90);
+    Product product2 = new Product(null,"Bola de basquete","Bola de basquete profissional da Spadding",89.90);
+    Product product3 = new Product(null,"Terno Preto DAB","Um terno social",200.90);
+    Product product4 = new Product(null,"Memorias do Subsolo","Livro do Dostoiévski",40.90);
+    Product product5 = new Product(null,"Pasta Termica","Pasta termica par acpu",20.90);
+
     userRepository.saveAll(Arrays.asList(user1,user2));
     orderRepository.saveAll(Arrays.asList(order1,order2,order3));
+    productRepository.saveAll(Arrays.asList(product1,product2,product3,product4,product5));
 
     user1.getOrders().addAll(Arrays.asList(order1,order2));
     user2.getOrders().addAll(Arrays.asList(order3));

@@ -8,6 +8,8 @@ import lombok.*;
 import java.time.Instant;
 @NoArgsConstructor
 //@AllArgsConstructor
+@Getter
+@Setter
 @EqualsAndHashCode(of = "id")
 @Entity
 @Table(name = "tb_orders")
@@ -15,16 +17,13 @@ public class Order{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Getter @Setter
     private Long id;
 
-    @Getter @Setter
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",timezone = "GMT")
     private Instant moment;
-    @Getter @Setter @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Getter @Setter
     @ManyToOne
     @JoinColumn(name = "client_id")
     private User client;
