@@ -27,6 +27,17 @@ public class ProductController {
         return ResponseEntity.ok().body(obj);
     }
 
+    @GetMapping(value = "/search")
+    public ResponseEntity<List<Product>> findLessThanPrice(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String maxPrice,
+            @RequestParam(required = false) String minPrice,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String direction
+    ){
+        List<Product> list = service.searchProducts(minPrice, maxPrice, name, sortBy, direction);
+        return ResponseEntity.ok().body(list);
+    }
 
 
 }

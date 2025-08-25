@@ -1,7 +1,5 @@
 package com.projetctJava.ProjectSpring.controllers;
 
-import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
-import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +26,14 @@ public class UserController {
         return ResponseEntity.ok().body(obj);
     }
     @GetMapping(value = "/search")
-    public ResponseEntity<List<User>> findUsers(
-            @RequestParam(required = false) Long id,
+    public ResponseEntity<List<User>> searchUsers(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String phoneNumber,
-            @RequestParam(required = false) String address)
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String direction)
     {
-        List<User> list = service.findUsers(id,name,email,phoneNumber,address);
+        List<User> list = service.searchUsers(name,email,phoneNumber,address,direction);
         return ResponseEntity.ok().body(list);
     }
 

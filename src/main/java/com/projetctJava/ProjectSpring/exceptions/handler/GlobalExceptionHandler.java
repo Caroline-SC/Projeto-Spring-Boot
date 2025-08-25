@@ -2,6 +2,7 @@ package com.projetctJava.ProjectSpring.exceptions.handler;
 
 import com.projetctJava.ProjectSpring.exceptions.custom.DateInvalidFormatterException;
 import com.projetctJava.ProjectSpring.exceptions.custom.IllegalStatusException;
+import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.exceptions.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +18,7 @@ import java.time.Instant;
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler({ResourceNotFoundException.class,NoResourceFoundException.class})
-    public ResponseEntity<ErrorResponse> resourceNotFound(RuntimeException e, HttpServletRequest request){
+    public ResponseEntity<ErrorResponse> resourceNotFound(Exception e, HttpServletRequest request){
         HttpStatus status = HttpStatus.NOT_FOUND;
         ErrorResponse err = new ErrorResponse(
                 Instant.now(),
@@ -40,13 +41,13 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(err);
     }
-    @ExceptionHandler(DateInvalidFormatterException.class)
-    public ResponseEntity<ErrorResponse> DateTimeFormatterException(DateInvalidFormatterException e, HttpServletRequest request){
+    @ExceptionHandler({DateInvalidFormatterException.class, NumberFormatException.class,InvalidParamException.class})
+    public ResponseEntity<ErrorResponse> DateTimeFormatterException(Exception e, HttpServletRequest request){
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErrorResponse err = new ErrorResponse(
                 Instant.now(),
                 status.value(),
-                "Invalid format",
+                "Invalid value",
                 e.getMessage(),
                 request.getRequestURI() );
 

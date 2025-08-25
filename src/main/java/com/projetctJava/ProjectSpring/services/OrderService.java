@@ -1,16 +1,16 @@
 package com.projetctJava.ProjectSpring.services;
 
+import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.models.enums.OrderStatus;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
 import com.projetctJava.ProjectSpring.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -35,21 +35,6 @@ public class OrderService {
                 orElseThrow(() ->new ResourceNotFoundException(id, "Order"));
     }
 
-    //Find by moment
-    public List<Order> findBeforeDay(String formatedDay){
-    Instant moment = DateUtil.atStartOfDay(formatedDay);
-    return repository.findByMomentBefore(moment);
-    }
-    public List<Order> findAfterDay(String formatedDay){
-    Instant moment = DateUtil.atStartOfDay(formatedDay);
-    return repository.findByMomentAfter(moment);
-    }
-    public List<Order> findBetweenDays(String startFormatedDay, String endFormatedDay){
-    Instant startMoment = DateUtil.atStartOfDay(startFormatedDay);
-    Instant endMoment = DateUtil.atStartOfDay(endFormatedDay);
-    return repository.findByMomentBetween(startMoment,endMoment);
-    }
-
     //Find by user id
     public List<Order> findByUserId(Long id){
         List<Order> o = repository.findByClientId(id);
@@ -62,25 +47,47 @@ public class OrderService {
         }
         return repository.findByClientId(id);
     }
-
-    public List<Order> findOrders(String status, String moment){
-        List<Specification<Order>> spec = new ArrayList<>();
-
+    public List<Order> searchOrders(String status,
+                                    String clientName,
+                                    String startDate,
+                                    String endDate,
+                                    String sortBy,
+                                    String direction){
+        Instant startDayInstant = null;
+        Instant endDayInstant = null;
+        OrderStatus orderStatus = null;
         if (status != null){
             status  = OrderStatus.formatStatus(status);
-            OrderStatus.fromString(status);
-            String statusFormated = "%" + status + "%";
-            spec.add((root, query, cb) ->
-                    cb.like(cb.lower(root.get("status")), statusFormated)); 
+            orderStatus = OrderStatus.fromString(status);
         }
-        if(moment != null){
-            spec.add((root, query, cb) ->
-                    cb.between(root.get("moment"),
-                    DateUtil.atStartOfDay(moment),DateUtil.atEndOfDay(moment)));
-        }
-        return repository.findAll(spec.stream()
-        .reduce((root, query, cb) ->
-                cb.conjunction(), (spec1, spec2) -> spec1.and(spec2) ));
+        if(clientName != null) clientName = clientName.trim().toLowerCase().replace(" ","");
+        if(startDate != null) startDayInstant = DateUtil.atStartOfDay(startDate);
+        if(endDate != null) endDayInstant = DateUtil.atStartOfDay(endDate);
 
+        Sort sort = createSort(sortBy, direction);
+
+        return repository.searchOrder(orderStatus,clientName,startDayInstant,endDayInstant,sort);
+    }
+
+    private Sort createSort(String sortBy, String direction) {
+        if (sortBy == null || sortBy.isEmpty()){
+            sortBy = "moment";}
+        else{
+            if (sortBy.equalsIgnoreCase("status")) sortBy = "statusCode";
+            else if(!sortBy.equalsIgnoreCase("status") && !sortBy.equalsIgnoreCase("moment")){
+                throw new InvalidParamException("sortBy","status or moment",sortBy);
+            }}
+        Sort.Direction sortDirection = Sort.Direction.ASC;
+        if (direction != null){
+            if (direction.equalsIgnoreCase("desc")){
+                sortDirection = Sort.Direction.DESC;
+            }
+            else if(direction.equalsIgnoreCase("asc")){}
+            else{
+                throw new InvalidParamException("direction","asc or desc",direction);
+            }
+        }
+
+        return Sort.by(sortDirection, sortBy);
     }
 }

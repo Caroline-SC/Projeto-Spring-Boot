@@ -27,31 +27,17 @@ public class OrderController {
         return ResponseEntity.ok().body(obj);
     }
 
-    @GetMapping(value= "/before")
-    public ResponseEntity<List<Order>> findBeforeDay(@RequestParam String day) {
-            List<Order> list = service.findBeforeDay(day);
-            return ResponseEntity.ok().body(list);
-    }
-    @GetMapping(value= "/after")
-    public ResponseEntity<List<Order>> findAfterDay(@RequestParam String day) {
-        List<Order> list = service.findAfterDay(day);
-        return ResponseEntity.ok().body(list);
-    }
-    @GetMapping(value= "/between")
-    public ResponseEntity<List<Order>> findBetweenDays(
-            @RequestParam String start,
-            @RequestParam String end) {
-        List<Order> list = service.findBetweenDays(start,end);
-        return ResponseEntity.ok().body(list);
-    }
     @GetMapping(value = "/search")
     public ResponseEntity<List<Order>> findOrders(
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) String moment){
+            @RequestParam(required = false) String clientName,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String direction){
 
-        List<Order> list = service.findOrders(status, moment);
+        List<Order> list = service.searchOrders(status, clientName, startDate, endDate, sortBy, direction);
         return ResponseEntity.ok().body(list);
-
     }
     
     @GetMapping(value = "/client/{id}")
