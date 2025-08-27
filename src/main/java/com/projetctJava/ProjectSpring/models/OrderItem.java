@@ -1,8 +1,6 @@
 package com.projetctJava.ProjectSpring.models;
 
-import jakarta.persistence.Embeddable;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +11,24 @@ import lombok.Setter;
 @Getter @Setter
 @EqualsAndHashCode
 public class OrderItem {
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
+
+    private Long productId;
+    private String productName;
     private Integer quantity;
     private Double currentPrice;
 
-    public Double subTotal(){
+    @Transient
+    private Product product;
+
+    public OrderItem(Integer quantity, Product product) {
+        this.quantity = quantity;
+        this.product = product;
+        this.productId = product.getId();
+        this.productName = product.getName();
+        this.currentPrice = product.getPrice();
+    }
+
+    public Double getsubTotal(){
         return quantity*currentPrice;
     }
 }

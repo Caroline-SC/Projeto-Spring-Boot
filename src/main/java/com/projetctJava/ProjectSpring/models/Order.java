@@ -7,6 +7,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+
 @NoArgsConstructor
 //@AllArgsConstructor
 @Getter
@@ -20,6 +23,7 @@ public class Order{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name ="created_at")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",timezone = "GMT")
     private Instant moment;
     @Enumerated(EnumType.STRING)
@@ -34,7 +38,9 @@ public class Order{
     @Column(name = "status_code")
     private Integer statusCode;
 
-
+    @ElementCollection
+    @CollectionTable(name = "order_items",joinColumns = @JoinColumn(name = "order_id"))
+    private List<OrderItem> items = new ArrayList<>();
 
     public Order (Long id, Instant moment, OrderStatus status, User client){
         this.id = id;
@@ -44,13 +50,16 @@ public class Order{
         this.statusCode = this.status.getCode();
     }
 
-    @PrePersist
-    @PreUpdate
-    public void updateStatusCode() {
-        if (this.status != null) {
-            this.statusCode = this.status.getCode();
-        }}
+    public void addItems(List<OrderItem> items){
+        for(OrderItem item : items) this.items.add(item);
+    }
+    public void addItem(OrderItem item){
+        items.add(item);
+    }
 
-
-
+    public Double getTotal(){
+        return items.stream()
+                .map(OrderItem::getsubTotal)
+                .reduce(0.0,(x,y)-> x+y);
+    }
 }
