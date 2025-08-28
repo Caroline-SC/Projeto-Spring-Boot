@@ -26,7 +26,6 @@ public class User {
     private String phoneNumber;
 
     @Setter(AccessLevel.NONE)
-    @JsonIgnore
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
 

@@ -24,8 +24,8 @@ public class Order{
     private Long id;
 
     @Column(name ="created_at")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'",timezone = "GMT")
     private Instant moment;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -33,8 +33,6 @@ public class Order{
     @JoinColumn(name = "client_id")
     private User client;
 
-    //Not in future DTO
-    @JsonIgnore
     @Column(name = "status_code")
     private Integer statusCode;
 

@@ -1,14 +1,16 @@
 package com.projetctJava.ProjectSpring.services;
 
+import com.projetctJava.ProjectSpring.dto.response.UserResponse;
+import com.projetctJava.ProjectSpring.dto.response.UserWithOrdersResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
-import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -17,21 +19,30 @@ public class UserService {
     private UserRepository repository;
 
     //Find all
-    public List<User> findAll() {
+    public List<UserResponse> findAll() {
         if (repository.findAll().isEmpty()){
             throw new ResourceNotFoundException("User");
         }
-        return repository.findAll();
+        return repository.findAll().stream()
+                .map(UserResponse::fromEntity)
+                .collect(Collectors.toList());
 }
     //Find By id
-    public User findById(Long id){
-        return repository.findById(id).
-                orElseThrow(() ->new ResourceNotFoundException(id, "User"));
+    public UserResponse findById(Long id){
+
+        return UserResponse.fromEntity(repository.findById(id).
+                orElseThrow(() ->new ResourceNotFoundException(id, "User")));
+
+    }
+    public UserWithOrdersResponse findByIdWithOrders(Long id){
+
+        return UserWithOrdersResponse.fromEntity(repository.findById(id).
+                orElseThrow(() ->new ResourceNotFoundException(id, "User")));
 
     }
 
     //Search users
-    public List<User> searchUsers(String name,
+    public List<UserResponse> searchUsers(String name,
                                   String email,
                                   String number,
                                   String address,
@@ -43,7 +54,9 @@ public class UserService {
 
         Sort sort = createSort(direction);
 
-        return repository.searchUser(name,email,number,address,sort);
+        return repository.searchUser(name,email,number,address,sort).stream()
+                .map(UserResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 
     private Sort createSort(String direction) {

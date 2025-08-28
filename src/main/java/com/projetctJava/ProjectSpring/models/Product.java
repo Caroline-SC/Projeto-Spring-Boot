@@ -2,16 +2,14 @@ package com.projetctJava.ProjectSpring.models;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode(of = "id")
 @Table(name = "tb_products")
 public class Product {
     @Id

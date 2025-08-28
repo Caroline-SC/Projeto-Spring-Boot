@@ -1,5 +1,7 @@
 package com.projetctJava.ProjectSpring.services;
 
+import com.projetctJava.ProjectSpring.dto.response.OrderResponse;
+import com.projetctJava.ProjectSpring.dto.response.ProductResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Product;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -16,21 +19,23 @@ public class ProductService {
     ProductRepository repository;
 
     //Find all
-    public List<Product> findAll() {
-        List<Product> o = repository.findAll();
-        if (o.isEmpty()){
+    public List<ProductResponse> findAll() {
+        List<Product> products = repository.findAll();
+        if (repository.findAll().isEmpty()){
             throw new ResourceNotFoundException("Products");
         }
-        return o;
+        return repository.findAll().stream()
+                .map(ProductResponse::fromEntity)
+                .collect(Collectors.toList());
     }
     //Find by id
-    public Product findById(Long id){
-        return repository.findById(id).
-                orElseThrow(() ->new ResourceNotFoundException(id, "Product"));
+    public ProductResponse findById(Long id){
+        return ProductResponse.fromEntity(repository.findById(id).
+                orElseThrow(() ->new ResourceNotFoundException(id, "Product")));
     }
 
     //FindByParams
-    public List<Product> searchProducts(
+    public List<ProductResponse> searchProducts(
                           String minPrice,
                           String maxPrice,
                           String name,
@@ -57,7 +62,9 @@ public class ProductService {
         }
 
         Sort sort = createSort(sortBy, direction);
-        return repository.searchProducts(name, minPriceFormated, maxPriceFormated, sort);
+        return repository.searchProducts(name, minPriceFormated, maxPriceFormated, sort).stream()
+                .map(ProductResponse::fromEntity)
+                .collect(Collectors.toList());
 
     }
 
