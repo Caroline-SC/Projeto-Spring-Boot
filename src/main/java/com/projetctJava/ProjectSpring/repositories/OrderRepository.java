@@ -31,4 +31,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             @Param("endMoment") Instant endMoment,
             Sort sort
     );
+    Boolean existsByClientId(Long id);
 }

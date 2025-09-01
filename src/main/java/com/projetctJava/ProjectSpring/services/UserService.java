@@ -6,12 +6,16 @@ import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserWithOrdersResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.DuplicateResourceException;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
+import com.projetctJava.ProjectSpring.exceptions.custom.ResourceHasAssociationsException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
+import com.projetctJava.ProjectSpring.models.Order;
 import com.projetctJava.ProjectSpring.models.User;
+import com.projetctJava.ProjectSpring.repositories.OrderRepository;
 import com.projetctJava.ProjectSpring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +25,8 @@ public class UserService {
 
     @Autowired
     private UserRepository repository;
+    @Autowired
+    private OrderRepository orderRepository;
 
     //Find all
     public List<UserResponse> findAll() {
@@ -62,6 +68,7 @@ public class UserService {
                 .map(UserResponse::fromEntity)
                 .collect(Collectors.toList());
     }
+    @Transactional
     public UserResponse createUser(UserCreateRequest userCreateRequest){
         if (repository.existsByEmail(userCreateRequest.getEmail())) {
             throw new DuplicateResourceException("Email");
@@ -74,7 +81,7 @@ public class UserService {
 
         return UserResponse.fromEntity(user);
     }
-
+    @Transactional
     public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
         User user = repository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(id, "User"));
@@ -107,7 +114,16 @@ public class UserService {
         User updatedUser = repository.save(user);
         return UserResponse.fromEntity(updatedUser);
     }
+    @Transactional
+    public void deleteById(Long id){
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id, "User"));
+        if (orderRepository.existsByClientId(id)){
+            throw new ResourceHasAssociationsException("user",id);
+        }
+            repository.deleteUserById(id);
 
+    }
 
     private Sort createSort(String direction) {
         Sort.Direction sortDirection = Sort.Direction.ASC;
@@ -123,6 +139,7 @@ public class UserService {
 
         return Sort.by(sortDirection, "name");
     }
+
 
 }
 

@@ -106,4 +106,15 @@ public class GlobalExceptionHandler {
                 request.getRequestURI() );
         return ResponseEntity.status(status).body(err);
     }
+    @ExceptionHandler(ResourceHasAssociationsException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateException(ResourceHasAssociationsException e,HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                "Invalid deletion.",
+                e.getMessage(),
+                request.getRequestURI() );
+        return ResponseEntity.status(status).body(err);
+    }
 }

@@ -30,4 +30,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
     User save(User user);
     Boolean existsByEmail(String email);
     Boolean existsByPhoneNumber(String email);
+    void deleteUserById(Long id);
 }
