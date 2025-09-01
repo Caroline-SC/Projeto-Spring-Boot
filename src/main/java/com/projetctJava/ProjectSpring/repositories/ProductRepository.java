@@ -26,5 +26,7 @@ public interface ProductRepository extends JpaRepository<Product,Long>, JpaSpeci
             @Param("minPrice") Double minPrice,
             @Param("maxPrice") Double maxPrice,
             Sort sort);
+    Product save(Product product);
+    void deleteById(Long id);
 
 }

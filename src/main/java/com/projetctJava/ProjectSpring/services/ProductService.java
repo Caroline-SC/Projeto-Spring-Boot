@@ -1,5 +1,6 @@
 package com.projetctJava.ProjectSpring.services;
 
+import com.projetctJava.ProjectSpring.dto.request.ProductCreateRequest;
 import com.projetctJava.ProjectSpring.dto.response.OrderResponse;
 import com.projetctJava.ProjectSpring.dto.response.ProductResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
@@ -9,6 +10,7 @@ import com.projetctJava.ProjectSpring.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,6 +68,13 @@ public class ProductService {
                 .map(ProductResponse::fromEntity)
                 .collect(Collectors.toList());
 
+    }
+    @Transactional
+    public ProductResponse createProduct(ProductCreateRequest productCreateRequest){
+        Product product = new Product(null, productCreateRequest.getName(),
+                productCreateRequest.getDescription(), productCreateRequest.getPrice());
+        repository.save(product);
+       return ProductResponse.fromEntity(product);
     }
 
 

@@ -1,11 +1,14 @@
 package com.projetctJava.ProjectSpring.controllers;
 
-import com.projetctJava.ProjectSpring.dto.response.ProductResponse;
+import com.projetctJava.ProjectSpring.dto.request.ProductCreateRequest;
+import com.projetctJava.ProjectSpring.dto.response.ProductResponse;;
 import com.projetctJava.ProjectSpring.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -38,6 +41,10 @@ public class ProductController {
         List<ProductResponse> list = service.searchProducts(minPrice, maxPrice, name, sortBy, direction);
         return ResponseEntity.ok().body(list);
     }
-
+    @PostMapping
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest productCreateRequest){
+        ProductResponse productResponse = service.createProduct(productCreateRequest);
+        return ResponseEntity.created(URI.create("/api/products/" + productResponse.getId())).body(productResponse);
+    }
 
 }
