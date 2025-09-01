@@ -6,9 +6,6 @@ API RESTful simples desenvolvida em Java/Spring Boot com operações CRUD comple
 
 > 📌 **Nota:** O código-fonte está todo escrito em inglês para seguir boas práticas de desenvolvimento
 
-
-## Funcionalidades
-
 ## 🎯 Funcionalidades em Desenvolvimento
 
 - **Produtos:** CRUD
