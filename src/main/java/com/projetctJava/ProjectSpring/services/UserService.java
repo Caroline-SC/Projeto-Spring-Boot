@@ -1,6 +1,7 @@
 package com.projetctJava.ProjectSpring.services;
 
-import com.projetctJava.ProjectSpring.dto.request.UserRequest;
+import com.projetctJava.ProjectSpring.dto.request.UserCreateRequest;
+import com.projetctJava.ProjectSpring.dto.request.UserUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserWithOrdersResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.DuplicateResourceException;
@@ -61,17 +62,50 @@ public class UserService {
                 .map(UserResponse::fromEntity)
                 .collect(Collectors.toList());
     }
-    public UserResponse createUser(UserRequest userRequest){
-        if (repository.existsByEmail(userRequest.getEmail())) {
+    public UserResponse createUser(UserCreateRequest userCreateRequest){
+        if (repository.existsByEmail(userCreateRequest.getEmail())) {
             throw new DuplicateResourceException("Email");
         }
-        if (repository.existsByPhoneNumber(userRequest.getPhoneNumber())) {
+        if (repository.existsByPhoneNumber(userCreateRequest.getPhoneNumber())) {
             throw new DuplicateResourceException("PhoneNumber");
         }
-        User user = new User(null,userRequest.getName(),userRequest.getEmail(),userRequest.getAddress(), userRequest.getPhoneNumber());
+        User user = new User(null, userCreateRequest.getName(), userCreateRequest.getEmail(), userCreateRequest.getAddress(), userCreateRequest.getPhoneNumber());
         repository.save(user);
 
         return UserResponse.fromEntity(user);
+    }
+
+    public UserResponse updateUser(Long id, UserUpdateRequest userUpdateRequest) {
+        User user = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(id, "User"));
+
+        if (userUpdateRequest.getEmail() != null && !userUpdateRequest.getEmail().isBlank()) {
+            if (!user.getEmail().equals(userUpdateRequest.getEmail())) {
+                if (repository.existsByEmail(userUpdateRequest.getEmail())) {
+                    throw new DuplicateResourceException("Email");
+                }
+                user.setEmail(userUpdateRequest.getEmail());
+            }
+        }
+
+        if (userUpdateRequest.getPhoneNumber() != null && !userUpdateRequest.getPhoneNumber().isBlank()) {
+            if (!user.getPhoneNumber().equals(userUpdateRequest.getPhoneNumber())) {
+                if (repository.existsByPhoneNumber(userUpdateRequest.getPhoneNumber())) {
+                    throw new DuplicateResourceException("PhoneNumber");
+                }
+                user.setPhoneNumber(userUpdateRequest.getPhoneNumber());
+            }
+        }
+        if (userUpdateRequest.getAddress() != null && !userUpdateRequest.getAddress().isBlank()){
+            user.setAddress(userUpdateRequest.getAddress());
+        }
+
+        if (userUpdateRequest.getName() != null && !userUpdateRequest.getName().isBlank()) {
+            user.setName(userUpdateRequest.getName());
+        }
+
+        User updatedUser = repository.save(user);
+        return UserResponse.fromEntity(updatedUser);
     }
 
 

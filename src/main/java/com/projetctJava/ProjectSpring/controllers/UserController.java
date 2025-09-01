@@ -1,6 +1,7 @@
 package com.projetctJava.ProjectSpring.controllers;
 
-import com.projetctJava.ProjectSpring.dto.request.UserRequest;
+import com.projetctJava.ProjectSpring.dto.request.UserCreateRequest;
+import com.projetctJava.ProjectSpring.dto.request.UserUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserWithOrdersResponse;
 import com.projetctJava.ProjectSpring.services.UserService;
@@ -47,11 +48,19 @@ public class UserController {
         return ResponseEntity.ok().body(list);
     }
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest){
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest userCreateRequest){
 
-        UserResponse userResponse = service.createUser(userRequest);
+        UserResponse userResponse = service.createUser(userCreateRequest);
         return ResponseEntity.created(URI.create("/api/users/" + userResponse.getId())).body(userResponse);
 
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdateRequest request) {
+
+        UserResponse userResponse = service.updateUser(id, request);
+        return ResponseEntity.ok().body(userResponse);
     }
 
 }
