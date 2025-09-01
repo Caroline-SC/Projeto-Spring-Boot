@@ -1,19 +1,21 @@
 package com.projetctJava.ProjectSpring.exceptions.handler;
 
-import com.projetctJava.ProjectSpring.exceptions.custom.DateInvalidFormatterException;
-import com.projetctJava.ProjectSpring.exceptions.custom.IllegalStatusException;
-import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
-import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
+import com.projetctJava.ProjectSpring.exceptions.custom.*;
 import com.projetctJava.ProjectSpring.exceptions.model.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -67,6 +69,41 @@ public class GlobalExceptionHandler {
                 e.getMessage(),
                 request.getRequestURI() );
 
+        return ResponseEntity.status(status).body(err);
+    }
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(
+            MethodArgumentNotValidException e, HttpServletRequest request) {
+
+        Map<String, String> errors = new HashMap<>();
+        e.getBindingResult().getAllErrors().forEach(error -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                errors.entrySet().stream()
+                        .map(entry -> entry.getKey() + ": " + entry.getValue())
+                        .collect(Collectors.joining(", ")),
+                "Invalid input data",
+                request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+
+    }
+    @ExceptionHandler(DuplicateResourceException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateException(DuplicateResourceException e,HttpServletRequest request) {
+        HttpStatus status = HttpStatus.CONFLICT;
+        ErrorResponse err = new ErrorResponse(
+                Instant.now(),
+                status.value(),
+                String.format("There is already a feature with this %s.",e.getAttribute().toLowerCase()),
+                e.getMessage(),
+                request.getRequestURI() );
         return ResponseEntity.status(status).body(err);
     }
 }

@@ -1,9 +1,12 @@
 package com.projetctJava.ProjectSpring.services;
 
+import com.projetctJava.ProjectSpring.dto.request.UserRequest;
 import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserWithOrdersResponse;
+import com.projetctJava.ProjectSpring.exceptions.custom.DuplicateResourceException;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
+import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -58,6 +61,19 @@ public class UserService {
                 .map(UserResponse::fromEntity)
                 .collect(Collectors.toList());
     }
+    public UserResponse createUser(UserRequest userRequest){
+        if (repository.existsByEmail(userRequest.getEmail())) {
+            throw new DuplicateResourceException("Email");
+        }
+        if (repository.existsByPhoneNumber(userRequest.getPhoneNumber())) {
+            throw new DuplicateResourceException("PhoneNumber");
+        }
+        User user = new User(null,userRequest.getName(),userRequest.getEmail(),userRequest.getAddress(), userRequest.getPhoneNumber());
+        repository.save(user);
+
+        return UserResponse.fromEntity(user);
+    }
+
 
     private Sort createSort(String direction) {
         Sort.Direction sortDirection = Sort.Direction.ASC;

@@ -1,12 +1,15 @@
 package com.projetctJava.ProjectSpring.controllers;
 
+import com.projetctJava.ProjectSpring.dto.request.UserRequest;
 import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserWithOrdersResponse;
 import com.projetctJava.ProjectSpring.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -42,6 +45,13 @@ public class UserController {
     {
         List<UserResponse> list = service.searchUsers(name,email,phoneNumber,address,direction);
         return ResponseEntity.ok().body(list);
+    }
+    @PostMapping
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest){
+
+        UserResponse userResponse = service.createUser(userRequest);
+        return ResponseEntity.created(URI.create("/api/users/" + userResponse.getId())).body(userResponse);
+
     }
 
 }

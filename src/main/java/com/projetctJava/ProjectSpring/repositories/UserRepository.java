@@ -27,4 +27,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
             @Param("number")String number,
             @Param("address")String address,
             Sort sort);
+    User save(User user);
+    Boolean existsByEmail(String email);
+    Boolean existsByPhoneNumber(String email);
 }
