@@ -1,11 +1,18 @@
 package com.projetctJava.ProjectSpring.services;
 
+import com.projetctJava.ProjectSpring.dto.request.OrderRequest;
 import com.projetctJava.ProjectSpring.dto.response.OrderResponse;
+import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
 import com.projetctJava.ProjectSpring.exceptions.custom.ResourceNotFoundException;
 import com.projetctJava.ProjectSpring.models.Order;
+import com.projetctJava.ProjectSpring.models.OrderItem;
+import com.projetctJava.ProjectSpring.models.Product;
+import com.projetctJava.ProjectSpring.models.User;
 import com.projetctJava.ProjectSpring.models.enums.OrderStatus;
 import com.projetctJava.ProjectSpring.repositories.OrderRepository;
+import com.projetctJava.ProjectSpring.repositories.ProductRepository;
+import com.projetctJava.ProjectSpring.repositories.UserRepository;
 import com.projetctJava.ProjectSpring.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -22,6 +29,10 @@ public class OrderService {
     private OrderRepository repository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     //Find all
     public List<OrderResponse> findAll() {
@@ -73,6 +84,32 @@ public class OrderService {
                 .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
     }
+
+    public OrderResponse createOrder(OrderRequest orderRequest){
+        User user = userRepository.findById(orderRequest.getClientId()).
+                orElseThrow(() ->new ResourceNotFoundException(orderRequest.getClientId(), "User"));
+        Order order = new Order();
+        order.setMoment(orderRequest.getMoment() != null ?
+                orderRequest.getMoment() : Instant.now());
+        order.setStatus(OrderStatus.fromString(orderRequest.getStatus()));
+        order.setClient(user);
+
+        List<OrderItem> orderItems = orderRequest.getItems().stream()
+                .map(item -> {
+                    Product product = productRepository.findById(item.getProductId())
+                            .orElseThrow(() ->new ResourceNotFoundException(item.getProductId(), "Product"));
+                    OrderItem orderItem = new OrderItem(item.getQuantity(),product);
+                    return orderItem;
+                }).collect(Collectors.toList());
+
+        order.setItems(orderItems);
+        repository.save(order);
+        return OrderResponse.fromEntity(order);
+    }
+
+
+
+
 
     private Sort createSort(String sortBy, String direction) {
         if (sortBy == null || sortBy.isEmpty()){

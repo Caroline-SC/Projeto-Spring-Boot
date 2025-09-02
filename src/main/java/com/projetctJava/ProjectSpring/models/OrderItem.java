@@ -17,12 +17,9 @@ public class OrderItem {
     private Integer quantity;
     private Double currentPrice;
 
-    @Transient
-    private Product product;
 
     public OrderItem(Integer quantity, Product product) {
         this.quantity = quantity;
-        this.product = product;
         this.productId = product.getId();
         this.productName = product.getName();
         this.currentPrice = product.getPrice();
