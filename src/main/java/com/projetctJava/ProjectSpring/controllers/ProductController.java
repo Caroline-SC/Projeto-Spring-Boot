@@ -3,7 +3,7 @@ package com.projetctJava.ProjectSpring.controllers;
 import com.projetctJava.ProjectSpring.dto.request.ProductCreateRequest;
 import com.projetctJava.ProjectSpring.dto.request.ProductUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.request.UserUpdateRequest;
-import com.projetctJava.ProjectSpring.dto.response.ProductResponse;;
+import com.projetctJava.ProjectSpring.dto.response.ProductResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.models.Product;
 import com.projetctJava.ProjectSpring.services.ProductService;
