@@ -1,7 +1,11 @@
 package com.projetctJava.ProjectSpring.controllers;
 
 import com.projetctJava.ProjectSpring.dto.request.ProductCreateRequest;
+import com.projetctJava.ProjectSpring.dto.request.ProductUpdateRequest;
+import com.projetctJava.ProjectSpring.dto.request.UserUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.response.ProductResponse;;
+import com.projetctJava.ProjectSpring.dto.response.UserResponse;
+import com.projetctJava.ProjectSpring.models.Product;
 import com.projetctJava.ProjectSpring.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +49,14 @@ public class ProductController {
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductCreateRequest productCreateRequest){
         ProductResponse productResponse = service.createProduct(productCreateRequest);
         return ResponseEntity.created(URI.create("/api/products/" + productResponse.getId())).body(productResponse);
+    }
+    @PatchMapping(value = "/{id}")
+    public ResponseEntity<ProductResponse> updateProduct(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductUpdateRequest request) {
+
+        ProductResponse productResponse = service.updateProduct(id, request);
+        return ResponseEntity.ok().body(productResponse);
     }
 
 }

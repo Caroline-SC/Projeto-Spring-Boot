@@ -1,6 +1,7 @@
 package com.projetctJava.ProjectSpring.services;
 
 import com.projetctJava.ProjectSpring.dto.request.ProductCreateRequest;
+import com.projetctJava.ProjectSpring.dto.request.ProductUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.response.OrderResponse;
 import com.projetctJava.ProjectSpring.dto.response.ProductResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
@@ -75,6 +76,22 @@ public class ProductService {
                 productCreateRequest.getDescription(), productCreateRequest.getPrice());
         repository.save(product);
        return ProductResponse.fromEntity(product);
+    }
+    @Transactional
+    public ProductResponse updateProduct( Long id,ProductUpdateRequest productUpdateRequest){
+        Product product = repository.findById(id).
+                orElseThrow(() ->new ResourceNotFoundException(id, "Product"));
+        if (productUpdateRequest.getName() != null && !productUpdateRequest.getName().isEmpty()){
+            product.setName(productUpdateRequest.getName());
+        }
+        if (productUpdateRequest.getDescription() != null && !productUpdateRequest.getDescription().isEmpty()){
+            product.setDescription(productUpdateRequest.getDescription());
+        }
+        if (productUpdateRequest.getPrice() != null){
+            product.setPrice(productUpdateRequest.getPrice());
+        }
+        Product updatedProduct = repository.save(product);
+        return ProductResponse.fromEntity(updatedProduct);
     }
 
 
