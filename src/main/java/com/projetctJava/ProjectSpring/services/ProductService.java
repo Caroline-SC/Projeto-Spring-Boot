@@ -93,7 +93,12 @@ public class ProductService {
         Product updatedProduct = repository.save(product);
         return ProductResponse.fromEntity(updatedProduct);
     }
-
+    @Transactional
+    public void deleteById(Long id){
+        Product product = repository.findById(id).
+                orElseThrow(() ->new ResourceNotFoundException(id, "Product"));
+        repository.deleteById(id);
+    }
 
     private Sort createSort(String sortBy, String direction) {
         if (sortBy == null || sortBy.isEmpty()){
