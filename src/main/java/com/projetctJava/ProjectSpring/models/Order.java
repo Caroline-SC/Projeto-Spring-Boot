@@ -47,7 +47,10 @@ public class Order{
         this.client = client;
         this.statusCode = this.status.getCode();
     }
-
+    public void setStatus(OrderStatus orderStatus){
+        this.status = orderStatus;
+        this.statusCode = orderStatus.getCode();
+    }
     public void addItems(List<OrderItem> items){
         for(OrderItem item : items) this.items.add(item);
     }

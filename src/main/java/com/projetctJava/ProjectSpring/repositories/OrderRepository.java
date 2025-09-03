@@ -32,4 +32,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             Sort sort
     );
     Boolean existsByClientId(Long id);
+    Order save(Order order);
+    void deleteById(Long id);
+
 }

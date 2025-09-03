@@ -1,6 +1,7 @@
 package com.projetctJava.ProjectSpring.controllers;
 
 import com.projetctJava.ProjectSpring.dto.request.OrderRequest;
+import com.projetctJava.ProjectSpring.dto.request.StatusUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.response.OrderResponse;
 import com.projetctJava.ProjectSpring.services.OrderService;
 import jakarta.validation.Valid;
@@ -52,6 +53,17 @@ public class OrderController {
     public ResponseEntity<OrderResponse> createOrder(@Valid @RequestBody OrderRequest orderRequest){
         OrderResponse orderResponse = service.createOrder(orderRequest);
         return ResponseEntity.created(URI.create("/api/orders/" + orderResponse.getId())).body(orderResponse);
+    }
+    @PatchMapping(value= "/{id}/status")
+    public ResponseEntity<OrderResponse> updateStatus(@PathVariable Long id,
+                                                      @RequestBody StatusUpdateRequest request){
+        OrderResponse orderResponse = service.updateStatus(id,request);
+        return ResponseEntity.ok().body(orderResponse);
+    }
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
 

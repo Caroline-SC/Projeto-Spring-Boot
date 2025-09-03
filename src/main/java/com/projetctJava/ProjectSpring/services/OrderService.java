@@ -1,6 +1,7 @@
 package com.projetctJava.ProjectSpring.services;
 
 import com.projetctJava.ProjectSpring.dto.request.OrderRequest;
+import com.projetctJava.ProjectSpring.dto.request.StatusUpdateRequest;
 import com.projetctJava.ProjectSpring.dto.response.OrderResponse;
 import com.projetctJava.ProjectSpring.dto.response.UserResponse;
 import com.projetctJava.ProjectSpring.exceptions.custom.InvalidParamException;
@@ -17,6 +18,7 @@ import com.projetctJava.ProjectSpring.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
@@ -84,14 +86,16 @@ public class OrderService {
                 .map(OrderResponse::fromEntity)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public OrderResponse createOrder(OrderRequest orderRequest){
         User user = userRepository.findById(orderRequest.getClientId()).
                 orElseThrow(() ->new ResourceNotFoundException(orderRequest.getClientId(), "User"));
         Order order = new Order();
         order.setMoment(orderRequest.getMoment() != null ?
                 orderRequest.getMoment() : Instant.now());
-        order.setStatus(OrderStatus.fromString(orderRequest.getStatus()));
+        OrderStatus orderStatus = OrderStatus.fromString(orderRequest.getStatus());
+        order.setStatus(orderStatus);
+        order.setStatusCode(orderStatus.getCode());
         order.setClient(user);
 
         List<OrderItem> orderItems = orderRequest.getItems().stream()
@@ -106,9 +110,21 @@ public class OrderService {
         repository.save(order);
         return OrderResponse.fromEntity(order);
     }
+@Transactional
+public OrderResponse updateStatus(Long id, StatusUpdateRequest statusRequest){
+        Order order = repository.findById(id).
+                orElseThrow(() ->new ResourceNotFoundException(id, "Order"));
+        order.setStatus(OrderStatus.fromString(statusRequest.getStatus()));
+        Order updatedOrder = repository.save(order);
+        return OrderResponse.fromEntity(updatedOrder);
+}
 
-
-
+@Transactional
+public void deleteById(Long id){
+        Order order = repository.findById(id)
+                .orElseThrow(() ->new ResourceNotFoundException(id, "Order"));
+        repository.deleteById(id);
+}
 
 
     private Sort createSort(String sortBy, String direction) {
